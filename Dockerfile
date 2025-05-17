@@ -1,9 +1,10 @@
 FROM nvidia/cuda:12.8.1-runtime-ubuntu22.04
 
 # Argument for PyTorch CUDA nightly index URL
-# For RTX 5090 and CUDA 12.8 runtime, cu121 nightlies are generally recommended.
-# Check https://pytorch.org/get-started/locally/ for the latest --pre command for CUDA 12.1 if needed.
-ARG PYTORCH_NIGHTLY_CUDA_INDEX_URL="https://download.pytorch.org/whl/nightly/cu121"
+# USER ACTION: Verify and use the correct URL from pytorch.org for nightly builds
+# that support your GPU architecture and are compatible with CUDA 12.8 runtime.
+# The user suggested aiming for a cu128 equivalent if available.
+ARG PYTORCH_NIGHTLY_CUDA_INDEX_URL="https://download.pytorch.org/whl/nightly/cu128"
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -48,7 +49,7 @@ RUN mkdir -p model_cache reference_audio outputs voices
 EXPOSE 8003
 
 # Healthcheck to verify the server is responding
-# Adjust start-period if your model loading takes longer
+# Adjust start-period if your model loading takes longer (e.g., 90s or 120s)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
   CMD curl --fail http://localhost:8003/docs || exit 1
 
